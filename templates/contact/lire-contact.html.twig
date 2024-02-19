@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{parent()}}Lire contact
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+	    <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
+		    Lire contact</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 p-4 m-0 text-primary">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <th class="text-end">Nom : </th>
+                                    <td>{{ contact.nom | capitalize }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Sujet : </th>
+                                    <td>{{ contact.sujet | capitalize }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Email : </th>
+                                    <td>{{ contact.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Date d'envoi : </th>
+                                    <td>{{ contact.dateEnvoi | date("d-m-Y à H:i:s")}}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Message : </th>
+                                    <td>{{ contact.message }}</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

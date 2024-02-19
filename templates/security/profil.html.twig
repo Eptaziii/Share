@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{parent()}}Profil
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+	    <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
+		    Profil</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 p-4 m-0 text-primary">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <th class="text-end">Email : </th>
+                                    <td>{{ app.user.email | lower }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Nom : </th>
+                                    <td>{{ app.user.nom }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Prénom : </th>
+                                    <td>{{ app.user.prenom }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Date d'inscription : </th>
+                                    <td>{{ app.user.dateInscription | date("d-m-Y à H:i:s")}}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Rôle : </th>
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <td>Administrateur</td>
+                                    {% elseif 'ROLE_MOD' in app.user.roles %}
+                                        <td>Modérateur</td>
+                                    {% else %}
+                                        <td>Utilisateur</td>
+                                    {% endif %}
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
