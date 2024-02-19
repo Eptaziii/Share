@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\FichierType;
+use App\Repository\FichierRepository;
 use App\Entity\Fichier;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +29,15 @@ class FichierController extends AbstractController
         }
         return $this->render('fichier/index.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/admin-liste-fichiers', name: 'app_liste_fichiers')]
+    public function listeFichiers(FichierRepository $fichierRepository): Response
+    {
+        $fichiers=$fichierRepository->findAll();
+        return $this->render('fichier/liste-fichiers.html.twig', [
+            'fichiers'=>$fichiers
         ]);
     }
 }

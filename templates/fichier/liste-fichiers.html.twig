@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{parent()}}Liste des fichiers
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+	    <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
+		    Liste des fichiers</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 p-4 m-0 text-primary">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr class="fw-bold text-primary">
+                                <th scope="col">Nom Original</th>
+                                <th scope="col">Nom Serveur</th>
+                                <th scope="col">Date d'envoi</th>
+                                <th scope="col">Extension</th>
+                                <th scope="col">Taille</th>
+                                <th scope="col">Nom Utilisateur</th>
+                                <th scope="col">Prénom Utilisateur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in fichiers %}
+                                <tr class="{{ cycle(['table-primary','table-secondary'], loop.index0) }}">
+                                    <td>{{ f.nomOriginal }}</td>
+                                    <td>{{ f.nomServeur }}</td>
+                                    <td>{{ f.dateEnvoi | date("d-m-Y à H:i:s") }}</td>
+                                    <td>{{ f.extension }}</td>
+                                    <td>{{ f.taille }}</td>
+                                    <td>{{ f.user.nom }}</td>
+                                    <td>{{ f.user.prenom }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

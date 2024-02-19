@@ -15,6 +15,7 @@
                                 <th scope="col">Email</th>
                                 <th scope="col">Date d'inscription</th>
                                 <th scope="col">Rôle</th>
+                                <th scope="col">Nombres de fichiers</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -22,7 +23,6 @@
                                 <tr class="{{ cycle(['table-primary','table-secondary'], loop.index0) }}">
                                     <td>{{ user.email | lower }}</td>
                                     <td>{{ user.dateInscription | date("d-m-Y à H:i:s")}}</td>
-                                    <td><a href="{{path("app_modifier-role",{'id':user.id})}}"><i class="bi bi-pen-fill text-dark"></i></a></td>
                                     {% if 'ROLE_ADMIN' in user.roles %}
                                         <td>Administrateur</td>
                                     {% elseif 'ROLE_MOD' in user.roles %}
@@ -30,6 +30,7 @@
                                     {% else %}
                                         <td>Utilisateur</td>
                                     {% endif %}
+                                    <td>{{ user.fichiers | length }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
