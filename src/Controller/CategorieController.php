@@ -39,8 +39,7 @@ class CategorieController extends AbstractController
     }
 
     #[Route('/private-modifier-categorie/{id}', name: 'app_modifier_categorie')]
-    public function modifierCategorie(Request $request,Categorie
-    $categorie,EntityManagerInterface $em): Response
+    public function modifierCategorie(Request $request,Categorie $categorie,EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ModifierCategorieType::class, $categorie);
         if($request->isMethod('POST')){
@@ -58,8 +57,7 @@ class CategorieController extends AbstractController
     }
 
     #[Route('/private-supprimer-categorie/{id}', name: 'app_supprimer_categorie')]
-    public function supprimerCategorie(Request $request,Categorie
-    $categorie,EntityManagerInterface $em): Response
+    public function supprimerCategorie(Request $request,Categorie $categorie,EntityManagerInterface $em): Response
     {   
         if($categorie!=null){
             $em->remove($categorie);

@@ -19,7 +19,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users | sort((a,b)=> b.dateInscription <=> a.dateInscription) %}
+                            {% for user in users | sort((a,b)=> a.dateInscription <=> b.dateInscription) %}
                                 <tr class="{{ cycle(['table-primary','table-secondary'], loop.index0) }}">
                                     <td>{{ user.email | lower }}</td>
                                     <td>{{ user.dateInscription | date("d-m-Y à H:i:s")}}</td>

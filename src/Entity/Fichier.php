@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FichierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,14 @@ class Fichier
     #[ORM\ManyToOne(inversedBy: 'fichiers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: Scategorie::class, inversedBy: 'fichiers')]
+    private Collection $scategorie;
+
+    public function __construct()
+    {
+        $this->scategorie = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +116,30 @@ class Fichier
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Scategorie>
+     */
+    public function getScategorie(): Collection
+    {
+        return $this->scategorie;
+    }
+
+    public function addScategorie(Scategorie $scategorie): static
+    {
+        if (!$this->scategorie->contains($scategorie)) {
+            $this->scategorie->add($scategorie);
+        }
+
+        return $this;
+    }
+
+    public function removeScategorie(Scategorie $scategorie): static
+    {
+        $this->scategorie->removeElement($scategorie);
 
         return $this;
     }

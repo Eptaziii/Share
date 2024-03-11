@@ -55,22 +55,21 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/admin-modifier-role/{id}', name: 'app_modifier-role')]
-    public function modifierRole(Request $request, User
-    $user,EntityManagerInterface $em): Response
+    #[Route('/admin-modifier-role/{id}', name: 'app_modifier_role')]
+    public function modifierRole(Request $request, User $user, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ModifierRoleType::class, $user);
         if($request->isMethod('POST')){
             $form->handleRequest($request);
             if ($form->isSubmitted()&&$form->isValid()){
-                $em->persist($user);
-                $em->flush();
-                $this->addFlash('noticej','Role modifié');
-                return $this->redirectToRoute('app_liste-users');
+            $em->persist($user);
+            $em->flush();
+            $this->addFlash('notice','Rôle modifié');
+            return $this->redirectToRoute('app_liste-user');
             }
-        }
+            }
         return $this->render('security/modifier-role.html.twig', [
-            'form' => $form->createView()
+            'form'=> $form->createView()
         ]);
     }
 

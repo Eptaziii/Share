@@ -4,13 +4,14 @@ namespace App\Form;
 
 use App\Entity\Fichier;
 use App\Entity\User;
+use App\Entity\Scategorie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -23,7 +24,10 @@ class FichierType extends AbstractType
         $builder
             ->add('nomOriginal',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
             ->add('nomServeur',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
-            ->add('dateEnvoi',DateType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
+            ->add('dateEnvoi', DateTimeType::class, [
+                'widget' => 'single_text',
+                'attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold']
+                ])            
             ->add('extension',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
             ->add('taille',IntegerType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
             ->add('user', EntityType::class, ['class' => User::class,'choice_label' =>  function($user) {
@@ -36,7 +40,14 @@ class FichierType extends AbstractType
                 },
                 'attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']
             ])
-            ->add('envoyer', SubmitType::class, ['attr' => ['class'=> 'btn bg-primary text-white m-4' ],'row_attr' => ['class' => 'text-center'],])
+            ->add('scategories', EntityType::class, [
+                'class' => Scategorie::class,
+                'choices' => $options['scategories'],
+                'choice_label' => 'libelle',
+                'expanded' => true,
+                'multiple' => true,
+                'label' => false, 'mapped' => false])
+            ->add('ajouter', SubmitType::class, ['attr' => ['class'=> 'btn bg-primary text-white m-4' ],'row_attr' => ['class' => 'text-center'],])
         ;
         
     }
@@ -45,6 +56,7 @@ class FichierType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Fichier::class,
+            'scategories' => []
         ]);
     }
 }
