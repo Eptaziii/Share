@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use App\Repository\UserRepository;
 use App\Entity\User;
+use App\Entity\Fichier;
+use App\Form\AjoutAmiType;
+use App\Form\FichierUserType;
+use App\Form\ModifierRoleType;
+use App\Repository\UserRepository;
+use App\Repository\ScategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use App\Form\ModifierRoleType;
-
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
 class SecurityController extends AbstractController
@@ -47,30 +51,138 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/profil', name:'app_profil')]
-    public function profil(UserRepository $userRepository): Response
+    public function profil(UserRepository $userRepository, Request $request, ScategorieRepository $scategorieRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $users=$userRepository->findAll();
+        $fichier = new Fichier();
+        $scategories = $scategorieRepository->findBy([], ['categorie'=>'asc', 'numero'=>'asc']);
+        $form = $this->createForm(FichierUserType::class, $fichier, ['scategories'=>$scategories]);
+        if($request->isMethod('POST')){
+            $form->handleRequest($request);
+            if ($form->isSubmitted()&&$form->isValid()){
+                $selectedScategories = $form->get('scategories')->getData();
+                foreach ($selectedScategories as $scategorie) {
+                    $fichier->addScategorie($scategorie);
+                }
+                $file = $form->get('fichier')->getData();
+                if($file){
+                    $nomFichierServeur = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $nomFichierServeur = $slugger->slug($nomFichierServeur);
+                    $nomFichierServeur = $nomFichierServeur.'-'.uniqid().'.'.$file->guessExtension();
+                    try{
+                        $fichier->setNomServeur($nomFichierServeur);
+                        $fichier->setNomOriginal($file->getClientOriginalName());
+                        $fichier->setDateEnvoi(new \Datetime());
+                        $fichier->setExtension($file->guessExtension());
+                        $fichier->setTaille($file->getSize());
+                        $fichier->setUser($this->getuser());
+                        $em->persist($fichier);
+                        $em->flush();
+                        $file->move($this->getParameter('file_directory'), $nomFichierServeur);
+                        $this->addFlash('notice', 'Fichier envoyé');
+                        return $this->redirectToRoute('app_profil');
+                    }
+                    catch(FileException $e){
+                        $this->addFlash('notice', 'Erreur d\'envoi');
+                    }
+                $em->persist($fichier);
+                $em->flush();
+                $this->addFlash('notice','Fichier envoyé');
+                }
+            }
+        }
         return $this->render('security/profil.html.twig', [
+            'form' => $form->createView(),
+            'scategories'=> $scategories,
             'users'=>$users
         ]);
     }
 
-    #[Route('/admin-modifier-role/{id}', name: 'app_modifier_role')]
-    public function modifierRole(Request $request, User $user, EntityManagerInterface $em): Response
+    #[Route('/private-telechargement-fichier-user/{id}', name: 'app_telechargement_fichier_user', requirements: ["id"=>"\d+"] )]
+    public function telechargementFichierUser(Fichier $fichier) {
+        if ($fichier == null){
+            return $this->redirectToRoute('app_profil'); 
+        }
+        else{
+            if($fichier->getUser()!==$this->getUser()){
+                $this->addFlash('notice', 'Vous n\'êtes pas le propriétaire de ce fichier');
+                return $this->redirectToRoute('app_profil'); 
+            }
+            return $this->file($this->getParameter('file_directory').'/'.$fichier->getNomServeur(), $fichier->getNomOriginal());
+        } 
+    }
+
+    #[Route('/private-ajout-ami', name:'app_ajout_ami')]
+    public function ajoutAmi(Request $request, EntityManagerInterface $em, UserRepository $userRepository): Response 
     {
-        $form = $this->createForm(ModifierRoleType::class, $user);
+        if($request->get('id')!=null){
+            $id = $request->get('id');
+            $userDemande = $userRepository->find($id);
+            if($userDemande){
+                $this->getUser()->removeDemander($userDemande);
+                $em->persist($this->getUser());
+                $em->flush();
+            }
+        }
+        if($request->get('idRefuser')!=null){
+            $id = $request->get('idRefuser');
+            $userRefuser = $userRepository->find($id);
+            if($userRefuser){
+                $this->getUser()->removeUsersDemande($userRefuser);
+                $em->persist($this->getUser());
+                $em->flush();
+            }
+        }
+        if($request->get('idAccepter')!=null){
+            $id = $request->get('idAccepter');
+            $userAccepter = $userRepository->find($id);
+            if($userAccepter){
+                $this->getUser()->addAccepter($userAccepter);
+                $userAccepter->addAccepter($this->getUser());
+                $this->getUser()->removeUsersDemande($userAccepter);
+                $em->persist($this->getUser());
+                $em->persist($userAccepter);
+                $em->flush();
+            }
+        }
+        $form = $this->createForm(AjoutAmiType::class);
         if($request->isMethod('POST')){
             $form->handleRequest($request);
             if ($form->isSubmitted()&&$form->isValid()){
-            $em->persist($user);
-            $em->flush();
-            $this->addFlash('notice','Rôle modifié');
-            return $this->redirectToRoute('app_liste-user');
+                $ami = $userRepository->findOneBy(array('email'=>$form->get('email')->getData()));
+                if(!$ami){
+                    $this->addFlash('noticer','Ami introuvable');
+                    return $this->redirectToRoute('app_ajout_ami');
+                } else{
+                    $this->getUser()->addDemander($ami);
+                    $em->persist($this->getUser());
+                    $em->flush();
+                    $this->addFlash('notice','Invitation envoyée');
+                    return $this->redirectToRoute('app_ajout_ami');
+                }
             }
-            }
-        return $this->render('security/modifier-role.html.twig', [
-            'form'=> $form->createView()
+        }
+
+        return $this->render('security/ajout-ami.html.twig', [
+            'form' => $form
         ]);
+    }
+
+    #[Route('/private-supp-ami/{idAccepter}', name:'app_supp_ami')]
+    public function SuppAmi(Request $request, EntityManagerInterface $em, UserRepository $userRepository): Response 
+    {
+        if($request->get('idAccepter')!=null){
+            $id = $request->get('idAccepter');
+            $userAccepter = $userRepository->find($id);
+            if($userAccepter){
+                $this->getUser()->removeAccepter($userAccepter);
+                $userAccepter->removeAccepter($this->getUser());
+                $em->persist($this->getUser());
+                $em->persist($userAccepter);
+                $em->flush();
+            }
+        }
+        return $this->redirectToRoute('app_ajout_ami');
     }
 
 }

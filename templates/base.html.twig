@@ -69,6 +69,20 @@
 									</div>
 								</li>
 							{% endif %}
+							{% if not is_granted('ROLE_ADMIN')%}
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">USER</a>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" href="{{path('app_ajout_fichier')}}">Ajout fichier</a>
+										<a class="dropdown-item" href="{{path('app_liste_fichiers')}}">Liste fichiers</a>
+										<a class="dropdown-item" href="{{path('app_liste_fichiers_par_utilisateur')}}">Liste fichiers par Users</a>
+									</div>
+								</li>
+							{% endif %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{path('app_ajout_ami')}}">Amis
+								</a>
+							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="{{path('app_profil')}}">
 									<i class="bi bi-person-circle"></i>

@@ -3,46 +3,78 @@
 	{{parent()}}Profil
 {% endblock %}
 {% block body %}
-    <div class="container-fluid">
-	    <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
-		    Profil</h1>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 p-4 m-0 text-primary">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        </thead>
-                        <tbody>
-                                <tr>
-                                    <th class="text-end">Email : </th>
-                                    <td>{{ app.user.email | lower }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-end">Nom : </th>
-                                    <td>{{ app.user.nom }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-end">Prénom : </th>
-                                    <td>{{ app.user.prenom }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-end">Date d'inscription : </th>
-                                    <td>{{ app.user.dateInscription | date("d-m-Y à H:i:s")}}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-end">Rôle : </th>
-                                    {% if 'ROLE_ADMIN' in app.user.roles %}
-                                        <td>Administrateur</td>
-                                    {% elseif 'ROLE_MOD' in app.user.roles %}
-                                        <td>Modérateur</td>
-                                    {% else %}
-                                        <td>Utilisateur</td>
-                                    {% endif %}
-                                </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container-fluid">
+		<h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
+			Profil</h1>
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-8 p-4 m-0 text-primary">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<thead></thead>
+						<tbody>
+
+							<tr class="text-center">
+								<td>{{ app.user.prenom }}
+									{{ app.user.nom | upper }}</td>
+							</tr>
+							<tr class="text-center">
+								<td>{{ app.user.email | lower }}</td>
+							</tr>
+							<tr class="text-center">
+								<td>Inscription le
+									{{ app.user.dateInscription | date("d-m-Y à H:i")}}</td>
+							</tr>
+							<tr class="text-center">
+								<td>Vous avez
+									{{ app.user.fichiers | length }}
+									fichier(s)</td>
+							</tr>
+							{% for f in app.user.fichiers %}
+								<tr>
+									<td>
+                                        <fieldset>
+											<legend>
+												<i class="bi bi-filetype-pdf"></i>
+												<a href="{{path('app_telechargement_fichier_user', {'id':f.id})}}" style="text-decoration: none">{{f.nomOriginal}}</a>
+											</legend>
+											<ul style="list-style: none">
+												{% for s in f.scategorie %}
+													<li>{{s.numero}})
+														{{s.libelle | capitalize}}</li>
+												{% endfor %}
+											</ul>
+										</fieldset>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+                <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">Ajout Fichier</h1>
+                {{ form_start(form) }}
+				{{ form_row(form.fichier) }}
+				<div class="table-responsive">
+					<table class="table">
+					{% set id = null %}
+						{% for scategorie in scategories %}
+							<tr>
+								{% if id != scategorie.categorie.id %}
+									{% set id = scategorie.categorie.id %}
+									<tr><td class="text-primary fw-bold">{{scategorie.categorie.id}} {{scategorie.categorie.libelle}}<td></td></tr>
+								{% endif %}
+								<td class="text-primary">
+									-
+									{{scategorie.numero}}
+									{{scategorie.libelle}}</td>
+								<td class="text-primary">
+								{{ form_widget(form.scategories[scategorie.id]) }}</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</div>
+				{{ form_row(form.ajouter) }}
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
 {% endblock %}
