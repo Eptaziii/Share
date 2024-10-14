@@ -15,7 +15,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FichierController extends AbstractController
 {
-    #[Route('/admin-ajout-fichier', name: 'app_ajout_fichier')]
+    #[Route('/private-ajout-fichier', name: 'app_ajout_fichier')]
     public function ajoutFichier(Request $request, ScategorieRepository $scategorieRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $fichier = new Fichier();
