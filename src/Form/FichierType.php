@@ -23,7 +23,7 @@ class FichierType extends AbstractType
         $builder
             ->add('fichier', FileType::class, array('label' => 'Fichier', 'mapped'=>false,'attr' => ['class'=>'form-control'], 'label_attr' => ['class'=> 'fw-bold'],'constraints' => [
                 new File([
-                    'maxSize' => '500k',
+                    'maxSize' => '500000k',
                     'mimeTypes' => [
                         'application/pdf',
                         'application/x-pdf',

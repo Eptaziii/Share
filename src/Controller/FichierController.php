@@ -86,4 +86,16 @@ class FichierController extends AbstractController
             $fichier->getNomOriginal());
         }
     }
+
+    #[Route('/private-supprimer-fichier/{id}', name: 'app_supprimer_fichier')]
+    public function supprimerFichier(Request $request, Fichier $fichier,EntityManagerInterface $em) 
+    {
+        if($fichier!=null){
+            unlink("../uploads/fichiers/".$fichier->getNomServeur());
+            $em->remove($fichier);
+            $em->flush();
+            $this->addFlash('noticer','Fichier '.$fichier->getNomOriginal().' supprimé');
+        }
+        return $this->redirectToRoute('app_liste_fichiers_par_utilisateur');
+    }
 }
