@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-	{{parent()}}Ajout ami
+    {{parent()}}
+    Les amis
 {% endblock %}
 {% block stylesheets %}
     {{parent()}}
@@ -17,9 +18,9 @@
     </style>
 {% endblock %}
 {% block body %}
-	<div class="container-fluid">
+    <div class="container-fluid">
         <h1 class="text-center text-primary mt-4 pt-4 fw-bold">
-            Ajout Ami</h1>
+        Les amis</h1>
         <div class="row justify-content-center">
             <div class="col-12 col-md-12 p-4 m-0 text-primary">
                 {{form_start(form)}}
@@ -33,11 +34,11 @@
                 {% if app.user.usersDemande | length > 0 %}
                     {% for d in app.user.usersDemande %}
                         <div class="list-group m-2">
-                            <div class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1 text-primary">{{d.email}}</h5>
-                                    <a href="{{path('app_ajout_ami',{'idAccepter':d.id})}}" class="btn btn-success btn-sm me-2 ms-2" tabindex="-1" role="button"aria-disabled="true">Accepter</a>
-                                    <a href="{{path('app_ajout_ami',{'idRefuser':d.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Refuser</a>
+                                    <a href="{{path('app_amis',{'idAccepter':d.id})}}" class="btn btn-success btn-sm me-2 ms-2" tabindex="-1" role="button" aria-disabled="true">Accepter</a>
+                                    <a href="{{path('app_amis',{'idRefuser':d.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Refuser</a>
                                 </div>
                             </div>
                         </div>
@@ -49,10 +50,10 @@
                 {% if app.user.demander | length > 0 %}
                     {% for d in app.user.demander %}
                         <div class="list-group m-2">
-                            <div class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1 text-primary">{{d.email}}</h5>
-                                    <a href="{{path('app_ajout_ami',{'id':d.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Annuler</a>
+                                    <a href="{{path('app_amis',{'id':d.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Annuler</a>
                                 </div>
                             </div>
                         </div>
@@ -64,10 +65,10 @@
                 {% if app.user.accepter | length > 0 %}
                     {% for a in app.user.accepter %}
                         <div class="list-group m-2">
-                            <div class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <span class="mb-1 text-primary">{{a.nom | upper}} {{a.prenom | capitalize}}</span>
-                                    <span><a href="{{path("app_supp_ami",{'idAccepter':a.id})}}"><i class="bi bi-trash-fill text-dark"></i></a></span>
+                                    <span><a href="{{path("app_supprimer_ami", {'id':a.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Supprimer</a></span>
                                     <span><i class="bi bi-person"></i></span>
                                 </div>
                             </div>

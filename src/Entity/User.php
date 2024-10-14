@@ -10,9 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Metadata\ApiResource;
 
+#[ApiResource()]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Erreur lors de la création du compte')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -43,14 +45,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Fichier::class)]
     private Collection $fichiers;
-
+    
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'demander')]
+    private Collection $usersDemande;
+    
+    #[ORM\JoinTable(name: "user_demande")]
+    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[InverseJoinColumn(name: 'demander_id', referencedColumnName: 'id')]
     #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'usersDemande')]
     private Collection $demander;
 
-    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'demander')]
-    private Collection $usersDemande;
-
     #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'usersAccepte')]
+    #[ORM\JoinTable(
+        name: "user_accepter", 
+        joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")], 
+        inverseJoinColumns: [new ORM\JoinColumn(name: "accepter_id", referencedColumnName: "id")]
+    )]
     private Collection $accepter;
 
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'accepter')]
