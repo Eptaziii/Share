@@ -53,48 +53,7 @@ class SecurityController extends AbstractController
     #[Route('/profil', name:'app_profil')]
     public function profil(UserRepository $userRepository, Request $request, ScategorieRepository $scategorieRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
-        $users=$userRepository->findAll();
-        $fichier = new Fichier();
-        $scategories = $scategorieRepository->findBy([], ['categorie'=>'asc', 'numero'=>'asc']);
-        $form = $this->createForm(FichierUserType::class, $fichier, ['scategories'=>$scategories]);
-        if($request->isMethod('POST')){
-            $form->handleRequest($request);
-            if ($form->isSubmitted()&&$form->isValid()){
-                $selectedScategories = $form->get('scategories')->getData();
-                foreach ($selectedScategories as $scategorie) {
-                    $fichier->addScategorie($scategorie);
-                }
-                $file = $form->get('fichier')->getData();
-                if($file){
-                    $nomFichierServeur = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                    $nomFichierServeur = $slugger->slug($nomFichierServeur);
-                    $nomFichierServeur = $nomFichierServeur.'-'.uniqid().'.'.$file->guessExtension();
-                    try{
-                        $fichier->setNomServeur($nomFichierServeur);
-                        $fichier->setNomOriginal($file->getClientOriginalName());
-                        $fichier->setDateEnvoi(new \Datetime());
-                        $fichier->setExtension($file->guessExtension());
-                        $fichier->setTaille($file->getSize());
-                        $fichier->setUser($this->getuser());
-                        $em->persist($fichier);
-                        $em->flush();
-                        $file->move($this->getParameter('file_directory'), $nomFichierServeur);
-                        $this->addFlash('notice', 'Fichier envoyé');
-                        return $this->redirectToRoute('app_profil');
-                    }
-                    catch(FileException $e){
-                        $this->addFlash('notice', 'Erreur d\'envoi');
-                    }
-                $em->persist($fichier);
-                $em->flush();
-                $this->addFlash('notice','Fichier envoyé');
-                }
-            }
-        }
         return $this->render('security/profil.html.twig', [
-            'form' => $form->createView(),
-            'scategories'=> $scategories,
-            'users'=>$users
         ]);
     }
 

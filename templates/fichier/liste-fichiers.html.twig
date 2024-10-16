@@ -1,39 +1,39 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-	{{parent()}}Liste des fichiers
+	{{parent()}}Liste de mes fichiers
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
 	    <h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
-		    Liste des fichiers</h1>
+		    Liste de mes fichiers</h1>
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 p-4 m-0 text-primary">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr class="fw-bold text-primary">
-                                <th scope="col">Nom Original</th>
-                                <th scope="col">Nom Serveur</th>
-                                <th scope="col">Date d'envoi</th>
-                                <th scope="col">Extension</th>
-                                <th scope="col">Taille</th>
-                                <th scope="col">Nom Utilisateur</th>
-                                <th scope="col">Prénom Utilisateur</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for f in fichiers %}
-                                <tr class="{{ cycle(['table-primary','table-secondary'], loop.index0) }}">
-                                    <td>{{ f.nomOriginal }}</td>
-                                    <td>{{ f.nomServeur }}</td>
-                                    <td>{{ f.dateEnvoi | date("d-m-Y à H:i:s") }}</td>
-                                    <td>{{ f.extension }}</td>
-                                    <td>{{ f.taille }}</td>
-                                    <td>{{ f.user.nom }}</td>
-                                    <td>{{ f.user.prenom }}</td>
+                        {% if app.user.fichiers | length > 0 %}
+                                {% for f in app.user.fichiers %}
+                                    <tr>
+                                        <td class="text-center">
+                                        
+                                            <fieldset>
+                                            <legend><i class="bi bi-filetype-pdf"></i><a href="{{path('app_telechargement_fichier', {'id':f.id})}}" style="text-decoration: none">{{f.nomOriginal}}</a><a href="{{path('app_supprimer_fichier_user', {'id':f.id})}}"><i class="bi bi-trash"></i></a></legend>
+                                                <ul style="list-style: none">
+                                                    {% for s in f.scategorie %}
+
+                                                        <li>{{s.numero}} 
+                                                        {{s.libelle | capitalize}}</li>
+
+                                                    {% endfor %}
+                                                </ul>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td class="text-center">Aucun fichier</td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
+                            {% endif %}
                     </table>
                 </div>
             </div>
