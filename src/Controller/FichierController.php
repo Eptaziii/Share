@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Telechargement;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Form\FichierType;
 use App\Entity\Fichier;
 use App\Entity\Partage;
-use App\Form\FichierType;
 use App\Form\FichierUserType;
 use App\Form\PartageFichierType;
 use App\Repository\UserRepository;
@@ -13,10 +17,7 @@ use App\Repository\PartageRepository;
 use App\Repository\ScategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FichierController extends AbstractController
 {
@@ -87,10 +88,15 @@ class FichierController extends AbstractController
     }
 
     #[Route('/private-telechargement-fichier/{id}', name: 'app_telechargement_fichier', requirements: ["id"=>"\d+"] )]
-    public function telechargementFichier(Fichier $fichier) {
+    public function telechargementFichier(Fichier $fichier, EntityManagerInterface $em) 
+    {
+        $telechargement = new Telechargement();
         if ($fichier == null){
             $this->redirectToRoute('app_liste_fichiers_par_utilisateur');
         } else{
+            $telechargement->setNomFichier($fichier->getNomOriginal());
+            $em->persist($telechargement);
+            $em->flush();
             return $this->file($this->getParameter('file_directory').'/'.$fichier->getNomServeur(),
             $fichier->getNomOriginal());
         }
@@ -116,47 +122,6 @@ class FichierController extends AbstractController
             $em->remove($fichier);
             $em->flush();
             $this->addFlash('noticer','Fichier '.$fichier->getNomOriginal().' supprimé');
-        }
-        return $this->redirectToRoute('app_liste_fichiers');
-    }
-
-    #[Route('/private-partage-fichier/{id}', name: 'app_partage_fichier')]
-    public function partageFichier(Request $request, Fichier $fichier,UserRepository $userRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
-    {
-        $partage = new Partage();
-        $users = [];
-        foreach ($this->getUser()->getUsersAccepte() as $user) {
-            array_push($users, $user);
-        }
-        $form = $this->createForm(PartageFichierType::class, $partage, ['users'=>$users]);
-        if($request->isMethod('POST')){
-            $form->handleRequest($request);
-            if ($form->isSubmitted()&&$form->isValid()){
-                $selectedUsers = $form->get('users')->getData();
-                foreach ($selectedUsers as $user) {
-                    $partage->setUserSource($this->getUser());
-                    $partage->setUserTarget($user);
-                    $partage->setFichier($fichier);
-                    $em->persist($partage);
-                    $em->flush();
-                }
-                $this->addFlash('notice','Fichier partagé');
-            }
-        }
-        return $this->render('fichier/partage-fichier.html.twig', [
-            'form' => $form->createView(),
-            'users'=> $users,
-            'fichier' => $fichier
-        ]);
-    }
-
-    #[Route('/private-supprimer-partage/{id}', name: 'app_supprimer_partage')]
-    public function supprimerPartage(Request $request, Partage $partage,EntityManagerInterface $em) 
-    {
-        if($partage!=null){
-            $em->remove($partage);
-            $em->flush();
-            $this->addFlash('noticer','Partage supprimé');
         }
         return $this->redirectToRoute('app_liste_fichiers');
     }
