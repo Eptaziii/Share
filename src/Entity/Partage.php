@@ -17,11 +17,12 @@ class Partage
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userSource = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nomFichier = null;
-
     #[ORM\ManyToOne(inversedBy: 'partages')]
     private ?User $userTarget = null;
+
+    #[ORM\ManyToOne(inversedBy: 'partages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Fichier $fichier = null;
 
     public function getId(): ?int
     {
@@ -40,18 +41,6 @@ class Partage
         return $this;
     }
 
-    public function getNomFichier(): ?string
-    {
-        return $this->nomFichier;
-    }
-
-    public function setNomFichier(string $nomFichier): static
-    {
-        $this->nomFichier = $nomFichier;
-
-        return $this;
-    }
-
     public function getUserTarget(): ?User
     {
         return $this->userTarget;
@@ -60,6 +49,18 @@ class Partage
     public function setUserTarget(?User $userTarget): static
     {
         $this->userTarget = $userTarget;
+
+        return $this;
+    }
+
+    public function getFichier(): ?Fichier
+    {
+        return $this->fichier;
+    }
+
+    public function setFichier(?Fichier $fichier): static
+    {
+        $this->fichier = $fichier;
 
         return $this;
     }

@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Fichier;
+use App\Entity\Partage;
 use App\Form\FichierType;
 use App\Form\FichierUserType;
+use App\Form\PartageFichierType;
 use App\Repository\UserRepository;
 use App\Repository\FichierRepository;
+use App\Repository\PartageRepository;
 use App\Repository\ScategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FichierController extends AbstractController
 {
-    #[Route('/admin-ajout-fichier', name: 'app_ajout_fichier')]
+    #[Route('/private-ajout-fichier', name: 'app_ajout_fichier')]
     public function ajoutFichier(Request $request, ScategorieRepository $scategorieRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $fichier = new Fichier();
@@ -63,12 +66,16 @@ class FichierController extends AbstractController
         ]);
     }
 
-    #[Route('/admin-liste-fichiers', name: 'app_liste_fichiers')]
-    public function listeFichiers(FichierRepository $fichierRepository): Response
+    #[Route('/private-liste-fichiers', name: 'app_liste_fichiers')]
+    public function listeFichiers(FichierRepository $fichierRepository, PartageRepository $partageRepository): Response
     {
         $fichiers=$fichierRepository->findAll();
+        $fichiersPartage=$partageRepository-> findBy(['userTarget' => $this->getUser()->getId()]);
+        $fichiersUserPartage=$partageRepository-> findBy(['userSource'=> $this->getUser()->getId()]);
         return $this->render('fichier/liste-fichiers.html.twig', [
-            'fichiers'=>$fichiers
+            'fichiers'=>$fichiers,
+            'fichiersPartage'=>$fichiersPartage,
+            'fichiersUserPartage'=>$fichiersUserPartage
         ]);
     }
 
@@ -111,5 +118,35 @@ class FichierController extends AbstractController
             $this->addFlash('noticer','Fichier '.$fichier->getNomOriginal().' supprimé');
         }
         return $this->redirectToRoute('app_liste_fichiers');
+    }
+
+    #[Route('/private-partage-fichier/{id}', name: 'app_partage_fichier')]
+    public function partageFichier(Request $request, Fichier $fichier,UserRepository $userRepository, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    {
+        $partage = new Partage();
+        $users = [];
+        foreach ($this->getUser()->getUsersAccepte() as $user) {
+            array_push($users, $user);
+        }
+        $form = $this->createForm(PartageFichierType::class, $partage, ['users'=>$users]);
+        if($request->isMethod('POST')){
+            $form->handleRequest($request);
+            if ($form->isSubmitted()&&$form->isValid()){
+                $selectedUsers = $form->get('users')->getData();
+                foreach ($selectedUsers as $user) {
+                    $partage->setUserSource($this->getUser());
+                    $partage->setUserTarget($user);
+                    $partage->setFichier($fichier);
+                    $em->persist($partage);
+                    $em->flush();
+                }
+                $this->addFlash('notice','Fichier partagé');
+            }
+        }
+        return $this->render('fichier/partage-fichier.html.twig', [
+            'form' => $form->createView(),
+            'users'=> $users,
+            'fichier' => $fichier
+        ]);
     }
 }

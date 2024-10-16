@@ -17,6 +17,7 @@
                                         
                                             <fieldset>
                                             <legend><i class="bi bi-filetype-pdf"></i><a href="{{path('app_telechargement_fichier', {'id':f.id})}}" style="text-decoration: none">{{f.nomOriginal}}</a><a href="{{path('app_supprimer_fichier_user', {'id':f.id})}}"><i class="bi bi-trash"></i></a></legend>
+                                            <a class="btn btn-success" href="{{path('app_partage_fichier', {'id':f.id})}}">Partager</a>
                                                 <ul style="list-style: none">
                                                     {% for s in f.scategorie %}
 
@@ -38,5 +39,61 @@
                 </div>
             </div>
         </div>
+        {% if fichiersUserPartage|length != 0 %}
+            <h1 class="text-center text-secondary mt-4 pt-4 display-1 fw-bold">
+		    Liste des fichiers que j'ai partagé</h1>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 p-4 m-0 text-primary">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                                {% for up in fichiersUserPartage %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <fieldset>
+                                            <legend><i class="bi bi-filetype-pdf"></i><a href="{{path('app_telechargement_fichier', {'id':up.fichier.id})}}" style="text-decoration: none">{{up.fichier.nomOriginal}}</a> | Partagé à : {{up.userTarget.nom}} {{up.userTarget.prenom}}</legend>
+                                                <ul style="list-style: none">
+                                                    {% for s in up.fichier.scategorie %}
+
+                                                        <li>{{s.numero}} 
+                                                        {{s.libelle | capitalize}}</li>
+
+                                                    {% endfor %}
+                                                </ul>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if fichiersPartage|length != 0 %}
+            <h2 class="text-center text-info mt-4 pt-4 display-2 fw-bold">
+		    Liste des fichiers partagés avec moi</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 p-4 m-0 text-primary">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                                {% for p in fichiersPartage %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <fieldset>
+                                            <legend><i class="bi bi-filetype-pdf"></i><a href="{{path('app_telechargement_fichier', {'id':p.fichier.id})}}" style="text-decoration: none">{{p.fichier.nomOriginal}}</a> | Partagé par : {{p.userSource.nom}} {{p.userSource.prenom}}</legend>
+                                                <ul style="list-style: none">
+                                                    {% for s in p.fichier.scategorie %}
+                                                        <li>{{s.numero}} 
+                                                        {{s.libelle | capitalize}}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
