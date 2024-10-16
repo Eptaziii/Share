@@ -66,6 +66,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'accepter')]
     private Collection $usersAccepte;
 
+    #[ORM\OneToMany(mappedBy: 'userSource', targetEntity: Partage::class)]
+    private Collection $partages;
+
     public function __construct()
     {
         $this->fichiers = new ArrayCollection();
@@ -73,6 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->usersDemande = new ArrayCollection();
         $this->accepter = new ArrayCollection();
         $this->usersAccepte = new ArrayCollection();
+        $this->partages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -308,6 +312,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->usersAccepte->removeElement($usersAccepte)) {
             $usersAccepte->removeAccepter($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Partage>
+     */
+    public function getPartages(): Collection
+    {
+        return $this->partages;
+    }
+
+    public function addPartage(Partage $partage): static
+    {
+        if (!$this->partages->contains($partage)) {
+            $this->partages->add($partage);
+            $partage->setUserSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removePartage(Partage $partage): static
+    {
+        if ($this->partages->removeElement($partage)) {
+            // set the owning side to null (unless already changed)
+            if ($partage->getUserSource() === $this) {
+                $partage->setUserSource(null);
+            }
         }
 
         return $this;
