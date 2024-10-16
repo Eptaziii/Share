@@ -40,9 +40,13 @@ class Fichier
     #[ORM\ManyToMany(targetEntity: Scategorie::class, inversedBy: 'fichiers')]
     private Collection $scategorie;
 
+    #[ORM\OneToMany(mappedBy: 'fichier', targetEntity: Partage::class, orphanRemoval: true)]
+    private Collection $partages;
+
     public function __construct()
     {
         $this->scategorie = new ArrayCollection();
+        $this->partages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -142,6 +146,36 @@ class Fichier
     public function removeScategorie(Scategorie $scategorie): static
     {
         $this->scategorie->removeElement($scategorie);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Partage>
+     */
+    public function getPartages(): Collection
+    {
+        return $this->partages;
+    }
+
+    public function addPartage(Partage $partage): static
+    {
+        if (!$this->partages->contains($partage)) {
+            $this->partages->add($partage);
+            $partage->setFichier($this);
+        }
+
+        return $this;
+    }
+
+    public function removePartage(Partage $partage): static
+    {
+        if ($this->partages->removeElement($partage)) {
+            // set the owning side to null (unless already changed)
+            if ($partage->getFichier() === $this) {
+                $partage->setFichier(null);
+            }
+        }
 
         return $this;
     }
