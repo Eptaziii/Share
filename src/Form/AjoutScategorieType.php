@@ -12,14 +12,46 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AjoutScategorieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('libelle', TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold']])
-            ->add('numero', IntegerType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold']])
+            ->add('libelle', TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold'],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez mettre le libellé de la sous-catégorie',
+                ]),
+                new Length([
+                    'min' => 3,
+                    'minMessage' => 'Veuillez mettre un libellé de la sous-catégorie de {{ limit }} caractères',
+                    // max length allowed by Symfony for security reasons
+                    'max' => 50,
+                    'maxMessage' => 'Veuillez mettre un libellé pour votre sous-catégorie moins grand'
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/\d/',
+                    'match' => false,
+                    'message' => 'Veuillez ne pas mettre de chiffre',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[a-z]/',
+                    'message' => 'Veuillez ajouter au moins une minuscule',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[#?!@$%^&*]/',
+                    'match' => false,
+                    'message' => 'Votre caractère spécial n\'est pas correcte',
+                ]),
+                ],
+            ])
+            ->add('numero', IntegerType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold'], 
+                
+            ])
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
                 'attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=> 'fw-bold'],

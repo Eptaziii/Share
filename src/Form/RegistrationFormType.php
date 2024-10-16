@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
@@ -22,14 +23,71 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
-            ->add('prenom',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
-            ->add('nom',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold']])
+            ->add('prenom',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold'], 
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez mettre votre prenom',
+                ]),
+                new Length([
+                    'min' => 3,
+                    'minMessage' => 'Veuillez mettre un prenom de {{ limit }} caractères',
+                    // max length allowed by Symfony for security reasons
+                    'max' => 50,
+                    'maxMessage' => 'Veuillez mettre un prenom moins grand'
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/\d/',
+                    'match' => false,
+                    'message' => 'Veuillez ne pas mettre de chiffre',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[a-z]/',
+                    'message' => 'Veuillez ajouter au moins une minuscule',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[#?!@$%^&*]/',
+                    'match' => false,
+                    'message' => 'Votre caractère spécial n\'est pas correcte',
+                ]),
+            ],
+            
+            ])
+
+            ->add('nom',TextType::class, ['attr' => ['class'=> 'form-control'], 'label_attr' => ['class'=>'fw-bold'],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez mettre votre nom',
+                ]),
+                new Length([
+                    'min' => 3,
+                    'minMessage' => 'Veuillez mettre un prenom de {{ limit }} caractères',
+                    // max length allowed by Symfony for security reasons
+                    'max' => 50,
+                    'maxMessage' => 'Veuillez mettre un nom moins grand'
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/\d/',
+                    'match' => false,
+                    'message' => 'Veuillez ne pas mettre de chiffre',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[a-z]/',
+                    'message' => 'Veuillez ajouter au moins une minuscule',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/[#?!@$%^&*]/',
+                    'match' => false,
+                    'message' => 'Votre caractère spécial n\'est pas correcte',
+                ]),
+            ],
+            
+            ])
             ->add('agreeTerms', CheckboxType::class, [
                                 'mapped' => false,
                                 'data' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Veuillez lire et accepter les termes',
                     ]),
                 ],
             ])
@@ -41,13 +99,30 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['autocomplete' => 'new-password','class'=> 'form-control'],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez saisir un mot de passe',
                     ]),
                     new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'min' => 12,
+                        'minMessage' => 'Veuillez mettre un mot de passe de {{ limit }} caractères',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/\d/',
+                        'match' => true,
+                        'message' => 'Veuillez ajouter au moins un chiffre',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[A-Z]/',
+                        'message' => 'Veuillez ajouter au moins une majuscule',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[a-z]/',
+                        'message' => 'Veuillez ajouter au moins une minuscule',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[#?!@$%^&*-]/',
+                        'message' => 'Veuillez ajouter au moins un caractère spécial',
                     ]),
                 ],
             ])
