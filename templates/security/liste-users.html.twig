@@ -24,13 +24,13 @@
                                     <td>{{ user.email | lower }}</td>
                                     <td>{{ user.dateInscription | date("d-m-Y à H:i:s")}}</td>
                                     {% if 'ROLE_ADMIN' in user.roles %}
-                                        <td>Administrateur<a href="{{path('app_roleUtilisateur', {'id':user.id})}}"><i class="bi bi-pencil-square"></i></a></td>
+                                        <td>Administrateur<a style="text-decoration:none;" href="{{path('app_roleUtilisateur', {'id':user.id})}}"> <i class="bi bi-pencil-square"></i></a></td>
                                     {% elseif 'ROLE_MOD' in user.roles %}
-                                        <td>Modérateur<a href="{{path('app_roleUtilisateur', {'id':user.id})}}"><i class="bi bi-pencil-square"></i></td>
+                                        <td>Modérateur<a style="text-decoration:none;" href="{{path('app_roleUtilisateur', {'id':user.id})}}"> <i class="bi bi-pencil-square"></i></td>
                                     {% else %}
-                                        <td>Utilisateur<a href="{{path('app_roleUtilisateur', {'id':user.id})}}"><i class="bi bi-pencil-square"></i></td>
+                                        <td>Utilisateur<a style="text-decoration:none;" href="{{path('app_roleUtilisateur', {'id':user.id})}}"> <i class="bi bi-pencil-square"></i></td>
                                     {% endif %}
-                                    <td>{{ user.fichiers | length }}</td>s
+                                    <td>{{ user.fichiers | length }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

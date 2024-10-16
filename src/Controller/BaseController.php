@@ -73,23 +73,5 @@ class BaseController extends AbstractController
         return $this->render('base/ml.html.twig', [
         ]);
     }
-    #[Route('/inscription', name: 'app_inscription')]
-    public function inscription(): Response
-    {
-        $inscription = new Inscription();
-        $form = $this->createForm(InscriptionType::class, $inscription);
-        if($request->isMethod('POST')){
-            $form->handleRequest($request);
-            if ($form->isSubmitted()&&$form->isValid()){
-                $em->persist($inscription);
-                $em->flush();
-                $this->addFlash('notice','Inscription envoyée');
-                return $this->redirectToRoute('app_inscription');
-            }
-        }
-
-        return $this->render('base/inscription.html.twig', [
-            'form' => $form->createView()
-        ]);
-    }
+    
 }

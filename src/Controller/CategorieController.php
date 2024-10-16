@@ -19,22 +19,8 @@ class CategorieController extends AbstractController
     EntityManagerInterface $em): Response
     {
         $categories=$categorieRepository->findAll();
-        $form = $this->createForm(SupprimerCategorieType::class, null, [
-            'categories' => $categories
-            ]);
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $selectedCategories = $form->get('categories')->getData();
-                foreach ($selectedCategories as $categorie) {
-                    $em->remove($categorie);
-                }
-                $em->flush();
-                $this->addFlash('notice', 'Catégories supprimées avec succès');
-                return $this->redirectToRoute('app_liste-categories');
-            }
         return $this->render('categorie/liste-categories.html.twig', [
             'categories'=>$categories,
-            'form' => $form->createView(),
         ]);
     }
 

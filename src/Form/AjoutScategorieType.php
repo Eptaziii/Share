@@ -34,11 +34,6 @@ class AjoutScategorieType extends AbstractType
                     'maxMessage' => 'Veuillez mettre un libellé pour votre sous-catégorie moins grand'
                 ]),
                 new Assert\Regex([
-                    'pattern' => '/\d/',
-                    'match' => false,
-                    'message' => 'Veuillez ne pas mettre de chiffre',
-                ]),
-                new Assert\Regex([
                     'pattern' => '/[a-z]/',
                     'message' => 'Veuillez ajouter au moins une minuscule',
                 ]),

@@ -36,13 +36,10 @@
                                     </td>
                                     <td><a href="{{path("app_modifier_categorie",{'id':categorie.id})}}"><i class="bi bi-pen-fill text-dark"></i></a></td>
                                     <td><a href="{{path("app_supprimer_categorie",{'id':categorie.id})}}"><i class="bi bi-trash-fill text-dark"></i></a></td>
-                                    <td>{{ form_widget(form.categories[categorie.id]) }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
-                    {{ form_widget(form.supprimer) }}
-                    {{ form_end(form) }}
                 </div>
             </div>
         </div>
