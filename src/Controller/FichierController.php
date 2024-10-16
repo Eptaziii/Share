@@ -79,7 +79,7 @@ class FichierController extends AbstractController
     }
 
     #[Route('/private-telechargement-fichier/{id}', name: 'app_telechargement_fichier', requirements: ["id"=>"\d+"] )]
-    public function telechargementFichier(Fichier $fichier, EntityManagerInterface $em, Telechargement $t) 
+    public function telechargementFichier(Fichier $fichier, EntityManagerInterface $em) 
     {
         $telechargement = new Telechargement();
         if ($fichier == null){
@@ -91,5 +91,29 @@ class FichierController extends AbstractController
             return $this->file($this->getParameter('file_directory').'/'.$fichier->getNomServeur(),
             $fichier->getNomOriginal());
         }
+    }
+
+    #[Route('/private-supprimer-fichier/{id}', name: 'app_supprimer_fichier')]
+    public function supprimerFichier(Request $request, Fichier $fichier,EntityManagerInterface $em) 
+    {
+        if($fichier!=null){
+            unlink("../uploads/fichiers/".$fichier->getNomServeur());
+            $em->remove($fichier);
+            $em->flush();
+            $this->addFlash('noticer','Fichier '.$fichier->getNomOriginal().' supprimé');
+        }
+        return $this->redirectToRoute('app_liste_fichiers_par_utilisateur');
+    }
+
+    #[Route('/private-supprimer-fichier-user/{id}', name: 'app_supprimer_fichier_user')]
+    public function supprimerFichierUser(Request $request, Fichier $fichier,EntityManagerInterface $em) 
+    {
+        if($fichier!=null){
+            unlink("../uploads/fichiers/".$fichier->getNomServeur());
+            $em->remove($fichier);
+            $em->flush();
+            $this->addFlash('noticer','Fichier '.$fichier->getNomOriginal().' supprimé');
+        }
+        return $this->redirectToRoute('app_liste_fichiers');
     }
 }

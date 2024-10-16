@@ -13,7 +13,7 @@ class Telechargement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 100)]
     private ?string $nomFichier = null;
 
     public function getId(): ?int
