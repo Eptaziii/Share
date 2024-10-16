@@ -79,6 +79,7 @@ class FichierController extends AbstractController
 
     #[Route('/private-telechargement-fichier/{id}', name: 'app_telechargement_fichier', requirements: ["id"=>"\d+"] )]
     public function telechargementFichier(Fichier $fichier) {
+        
         if ($fichier == null){
             $this->redirectToRoute('app_liste_fichiers_par_utilisateur');
         } else{
