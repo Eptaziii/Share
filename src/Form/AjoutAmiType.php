@@ -13,7 +13,7 @@ class AjoutAmiType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, ['attr' => ['class'=> 'form-control', 'placeholder' => 'Saisir l\'email de la personne que vous souhaitez inviter ' ], 'label_attr' => ['class'=>'fw-bold']])
+            ->add('email', EmailType::class, ['attr' => ['class'=> 'form-control email-auto', 'placeholder' => 'Saisir l\'email de la personne que vous souhaitez inviter ' ], 'label_attr' => ['class'=>'fw-bold']])
             ->add('demander', SubmitType::class, ['attr' => ['class'=> 'btn bg-primary text-white m-4' ], 'row_attr' => ['class' => 'text-center'],])
         ;
     }

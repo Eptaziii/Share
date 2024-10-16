@@ -79,3 +79,36 @@
         </div>
     </div>
 {% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js" ></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+
+    <script>
+        $(document).ready(function() {
+            $('.email-auto').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{path('api_search_users')}}",
+                        dataType: "json",
+                        data: {
+                            q: request.term
+                        },
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.nom,
+                                    value: item.email,
+                                    id: item.id,
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    $(".email-auto").val(ui.item.email);
+                }
+            });
+        });
+    </script>
+{% endblock %}
