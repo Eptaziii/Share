@@ -15,7 +15,7 @@ class ModifierRoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('roles', ChoiceType::class, ['mapped'=> false, 'attr' => ['class'=> 'text-black form-control'], 'label' => 'roles',
+        ->add('roles', ChoiceType::class, ['mapped'=> false, 'attr' => ['class'=> 'form-control'], 'label' => 'roles',
         'choices'  => [
             '-' => null,
             'Administrateur' => 'ROLE_ADMIN',

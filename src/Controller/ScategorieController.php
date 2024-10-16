@@ -57,7 +57,7 @@ class ScategorieController extends AbstractController
     }
 
     #[Route('/private-supprimer-scategorie/{id}', name: 'app_supprimer_scategorie')]
-    public function supprimerScategorie(Request $request,Scategorie $scategorie,EntityManagerInterface $em): Response
+    public function supprimerScategorie(Scategorie $scategorie,EntityManagerInterface $em): Response
     {   
         if($scategorie!=null){
             $em->remove($scategorie);
