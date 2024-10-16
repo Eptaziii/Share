@@ -149,4 +149,15 @@ class FichierController extends AbstractController
             'fichier' => $fichier
         ]);
     }
+
+    #[Route('/private-supprimer-partage/{id}', name: 'app_supprimer_partage')]
+    public function supprimerPartage(Request $request, Partage $partage,EntityManagerInterface $em) 
+    {
+        if($partage!=null){
+            $em->remove($partage);
+            $em->flush();
+            $this->addFlash('noticer','Partage supprimé');
+        }
+        return $this->redirectToRoute('app_liste_fichiers');
+    }
 }
