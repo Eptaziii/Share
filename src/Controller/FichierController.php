@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Telechargement;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -78,11 +79,15 @@ class FichierController extends AbstractController
     }
 
     #[Route('/private-telechargement-fichier/{id}', name: 'app_telechargement_fichier', requirements: ["id"=>"\d+"] )]
-    public function telechargementFichier(Fichier $fichier) {
-        
+    public function telechargementFichier(Fichier $fichier, EntityManagerInterface $em, Telechargement $t) 
+    {
+        $telechargement = new Telechargement();
         if ($fichier == null){
             $this->redirectToRoute('app_liste_fichiers_par_utilisateur');
         } else{
+            $telechargement->setNomFichier($fichier->getNomOriginal());
+            $em->persist($telechargement);
+            $em->flush();
             return $this->file($this->getParameter('file_directory').'/'.$fichier->getNomServeur(),
             $fichier->getNomOriginal());
         }
