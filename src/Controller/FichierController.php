@@ -8,7 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\FichierType;
 use App\Entity\Fichier;
+use App\Entity\Partage;
+use App\Form\FichierUserType;
+use App\Form\PartageFichierType;
 use App\Repository\UserRepository;
+use App\Repository\FichierRepository;
+use App\Repository\PartageRepository;
 use App\Repository\ScategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +26,7 @@ class FichierController extends AbstractController
     {
         $fichier = new Fichier();
         $scategories = $scategorieRepository->findBy([], ['categorie'=>'asc', 'numero'=>'asc']);
-        $form = $this->createForm(FichierType::class, $fichier, ['scategories'=>$scategories]);
+        $form = $this->createForm(FichierUserType::class, $fichier, ['scategories'=>$scategories]);
         if($request->isMethod('POST')){
             $form->handleRequest($request);
             if ($form->isSubmitted()&&$form->isValid()){
@@ -40,6 +45,7 @@ class FichierController extends AbstractController
                         $fichier->setDateEnvoi(new \Datetime());
                         $fichier->setExtension($file->guessExtension());
                         $fichier->setTaille($file->getSize());
+                        $fichier->setUser($this->getuser());
                         $em->persist($fichier);
                         $em->flush();
                         $file->move($this->getParameter('file_directory'), $nomFichierServeur);
@@ -52,7 +58,6 @@ class FichierController extends AbstractController
                 $em->persist($fichier);
                 $em->flush();
                 $this->addFlash('notice','Fichier envoyé');
-                return $this->redirectToRoute('app_ajout_fichier');
                 }
             }
         }
@@ -62,12 +67,16 @@ class FichierController extends AbstractController
         ]);
     }
 
-    #[Route('/admin-liste-fichiers', name: 'app_liste_fichiers')]
-    public function listeFichiers(FichierRepository $fichierRepository): Response
+    #[Route('/private-liste-fichiers', name: 'app_liste_fichiers')]
+    public function listeFichiers(FichierRepository $fichierRepository, PartageRepository $partageRepository): Response
     {
         $fichiers=$fichierRepository->findAll();
+        $fichiersPartage=$partageRepository-> findBy(['userTarget' => $this->getUser()->getId()]);
+        $fichiersUserPartage=$partageRepository-> findBy(['userSource'=> $this->getUser()->getId()]);
         return $this->render('fichier/liste-fichiers.html.twig', [
-            'fichiers'=>$fichiers
+            'fichiers'=>$fichiers,
+            'fichiersPartage'=>$fichiersPartage,
+            'fichiersUserPartage'=>$fichiersUserPartage
         ]);
     }
 
