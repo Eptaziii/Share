@@ -29,8 +29,15 @@
 									{{ app.user.fichiers | length }}
 									fichier(s)</td>
 							</tr>
+							<tr class="text-center">
+								<td>Mot de passe : 
+								<a class="btn btn-danger" href="{{path('app_changer_mdp')}}">Modifier votre mot de passe</a></td>
+							</tr>
 						</tbody>
 					</table>
+					<div class="text-center pt-5">
+						<a class="btn btn-danger" href="{{path('app_supp_user', {'id': app.user.id})}}">Supprimer le compte</a>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -10,9 +10,12 @@ use App\Form\ModifierRoleType;
 use App\Repository\UserRepository;
 use App\Repository\ScategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -81,17 +84,19 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/private-telechargement-fichier-user/{id}', name: 'app_telechargement_fichier_user', requirements: ["id"=>"\d+"] )]
-    public function telechargementFichierUser(Fichier $fichier) {
-        if ($fichier == null){
-            return $this->redirectToRoute('app_profil'); 
-        }
-        else{
-            if($fichier->getUser()!==$this->getUser()){
-                $this->addFlash('notice', 'Vous n\'êtes pas le propriétaire de ce fichier');
-                return $this->redirectToRoute('app_profil'); 
-            }
-            return $this->file($this->getParameter('file_directory').'/'.$fichier->getNomServeur(), $fichier->getNomOriginal());
-        } 
+    #[Route('/private-supprimer-user/{id}', name:'app_supp_user')]
+    public function suppUser(UserInterface $user, EntityManagerInterface $em): RedirectResponse
+    {
+
+        $session = new Session();
+        $session->invalidate();
+
+        $em->remove($user);
+        $em->flush(); 
+        $this->addFlash('noticer','Compte supprimé');
+        
+        return $this->redirectToRoute('app_logout');
     }
+
+    
 }
