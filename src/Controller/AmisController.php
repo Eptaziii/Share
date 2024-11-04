@@ -24,17 +24,19 @@ class AmisController extends AbstractController
     public function searchUsers(Request $request): JsonResponse
     {
         $query = $request->query->get('q', '');
-        $users = $this->userRepository->searchByNameOrEmail($query);
+        $users = $this->userRepository->searchByNameOrFirstnameOrEmail($query);
 
         $result = [];
         foreach ($users as $user) {
             if (!$this->getUser()->getUsersAccepte()->contains($user)) {
-                $result[] = [
-                    'id' => $user->getId(),
-                    'nom' => $user->getNom(),
-                    'prenom' => $user->getPrenom(),
-                    'email' => $user->getEmail(),
-                ];
+                if ($this->getUser() != $user) {
+                    $result[] = [
+                        'id' => $user->getId(),
+                        'nom' => $user->getNom(),
+                        'prenom' => $user->getPrenom(),
+                        'email' => $user->getEmail(),
+                    ];
+                }
             }
         }
 
