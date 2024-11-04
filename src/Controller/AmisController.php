@@ -28,11 +28,14 @@ class AmisController extends AbstractController
 
         $result = [];
         foreach ($users as $user) {
-            $result[] = [
-                'id' => $user->getId(),
-                'nom' => $user->getNom(),
-                'email' => $user->getEmail(),
-            ];
+            if (!$this->getUser()->getUsersAccepte()->contains($user)) {
+                $result[] = [
+                    'id' => $user->getId(),
+                    'nom' => $user->getNom(),
+                    'prenom' => $user->getPrenom(),
+                    'email' => $user->getEmail(),
+                ];
+            }
         }
 
         return new JsonResponse($result);
