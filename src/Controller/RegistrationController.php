@@ -23,24 +23,28 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setDateInscription(new \Datetime());
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
+            if ($form->get('verifPassword')->getData() == $form->get('plainPassword')->getData()) {
+                $user->setDateInscription(new \Datetime());
+                // encode the plain password
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
+    
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // do anything else you need here, like send an email
+    
+                return $userAuthenticator->authenticateUser(
                     $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );
+                    $authenticator,
+                    $request
+                );
+            } else {
+                $this->addFlash('noticer', 'Les deux mots de passes ne sont pas identiques');
+            }
         }
 
         return $this->render('registration/register.html.twig', [

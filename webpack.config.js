@@ -22,6 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('search-user', './assets/search-user.js')
+    .addEntry('verif-saisies', './assets/js/composant/verif-saisies.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

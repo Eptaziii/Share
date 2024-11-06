@@ -95,6 +95,7 @@ class RegistrationFormType extends AbstractType
                                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
+                'label' => "Mot de passe",
                 'label_attr' => ['class'=> 'fw-bold'],
                 'attr' => ['autocomplete' => 'new-password','class'=> 'form-control'],
                 'constraints' => [
@@ -126,6 +127,41 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('verifPassword', PasswordType::class, [
+                // instead of being set onto the object directly,
+                // this is read and encoded in the controller
+                'mapped' => false,
+                'label_attr' => ['class'=> 'fw-bold'],
+                'attr' => ['autocomplete' => 'new-password','class'=> 'form-control'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez saisir un mot de passe',
+                    ]),
+                    new Length([
+                        'min' => 12,
+                        'minMessage' => 'Veuillez mettre un mot de passe de {{ limit }} caractères',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 4096,
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/\d/',
+                        'match' => true,
+                        'message' => 'Veuillez ajouter au moins un chiffre',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[A-Z]/',
+                        'message' => 'Veuillez ajouter au moins une majuscule',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[a-z]/',
+                        'message' => 'Veuillez ajouter au moins une minuscule',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[#?!@$%^&*-]/',
+                        'message' => 'Veuillez ajouter au moins un caractère spécial',
+                    ]),
+                ],
+                ])
         ;
     }
 
@@ -133,6 +169,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'attr' => ['id' => 'registration_form']
         ]);
     }
 }
