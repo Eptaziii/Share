@@ -23,6 +23,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('search-user', './assets/search-user.js')
     .addEntry('verif-mdp', './assets/js/composant/verif-mdp.js')
+    .addEntry('captcha', './assets/captcha.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

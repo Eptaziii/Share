@@ -37,9 +37,13 @@
 			</div>
 			{{ form_widget(registrationForm.plainPassword, {id: "form_plainPassword"}) }}
 			{{ form_row(registrationForm.verifPassword, {label: 'Confirmer le mot de passe'}) }}
+			<div class="text-center taille" id="captcha">
+				
+			</div>
+			{{ form_widget(registrationForm.captcha, {id: "form_captcha"}) }}
 			{{ form_row(registrationForm.agreeTerms, {label: "J'accepte les termes"}) }}
 			<div class="text-center">
-				<button class="btn btn-lg btn-primary mt-2" type="submit">
+				<button class="btn btn-lg btn-primary mt-2 disabled" type="submit" id="btInscrire">
 					S'inscrire</button>
 			</div>
 			{{ form_end(registrationForm) }}
@@ -49,4 +53,5 @@
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('verif-mdp') }}
+	{{ encore_entry_script_tags('captcha') }}
 {% endblock %}

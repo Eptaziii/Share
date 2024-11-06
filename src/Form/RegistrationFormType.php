@@ -162,6 +162,16 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
                 ])
+            ->add('captcha', TextType::class, [
+                'mapped' => false,
+                
+                'attr' => [
+                    'class'=> 'form-control',
+                ], 
+                'label_attr' => [
+                    'class'=>'fw-bold'
+                ],
+            ])
         ;
     }
 
