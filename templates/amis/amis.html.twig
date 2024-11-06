@@ -5,6 +5,8 @@
 {% endblock %}
 {% block stylesheets %}
     {{parent()}}
+    {{ encore_entry_link_tags('search-user') }}
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
     <style>
         #ajout_ami_email {
             text-align: center;
@@ -78,4 +80,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js" ></script>
+    {{ encore_entry_script_tags('search-user') }}
 {% endblock %}

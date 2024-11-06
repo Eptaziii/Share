@@ -9,10 +9,40 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AmisController extends AbstractController
 {
+    private $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+    #[Route("/api/search-users", name:"api_search_users", methods:"GET")]
+    public function searchUsers(Request $request): JsonResponse
+    {
+        $query = $request->query->get('q', '');
+        $users = $this->userRepository->searchByNameOrFirstnameOrEmail($query);
+
+        $result = [];
+        foreach ($users as $user) {
+            if (!$this->getUser()->getUsersAccepte()->contains($user)) {
+                if ($this->getUser() != $user) {
+                    $result[] = [
+                        'id' => $user->getId(),
+                        'nom' => $user->getNom(),
+                        'prenom' => $user->getPrenom(),
+                        'email' => $user->getEmail(),
+                    ];
+                }
+            }
+        }
+
+        return new JsonResponse($result);
+    }
+
     #[Route('/private-amis', name: 'app_amis')]
     public function amis(Request $request, EntityManagerInterface $em, UserRepository $userRepository): Response
     {
