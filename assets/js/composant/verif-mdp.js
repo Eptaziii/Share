@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let mdp = document.getElementById("registration_form_plainPassword");
+    let mdp = document.getElementById("form_plainPassword");
     mdp.addEventListener("input", verifMdp, "false");
     
     function verifMdp() {
