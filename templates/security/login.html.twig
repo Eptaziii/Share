@@ -22,10 +22,17 @@
 					{% endif %}
 					<label for="inputEmail">Email</label>
 					<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-					<label for="inputPassword">Password</label>
-					<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+					<label for="form_plainPassword">Password</label>
+					<div class="row">
+						<div class="col-11">
+							<input type="password" name="password" id="form_plainPassword" class="form-control" autocomplete="current-password" required>
+						</div>
+						<div class="col">
+							<button type="button" class="btn btn-primary" id="toggle-mdp"><i class="bi bi-eye-fill"></i></button>
+						</div>
+					</div>
 					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-					<div class="text-center">
+					<div class="text-center pt-2">
 						<canvas id="captcha" width="300" height="100"></canvas>
 					</div>
 					<input type="text" name="captcha" id="form_captcha" class="form-control" required>
@@ -40,5 +47,6 @@
 	</div>
 	{% block javascript %}
 		{{ encore_entry_script_tags('captcha') }}
+		{{ encore_entry_script_tags('toggle-mdp') }}
 	{% endblock %}
 {% endblock %}
