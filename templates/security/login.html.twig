@@ -26,7 +26,14 @@
 					<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 					<div class="text-center">
-						<canvas id="captcha" width="300" height="100"></canvas>
+						<div class="row">
+							<div class="col-12 pt-2">
+								<canvas id="captcha" width="300" height="100"></canvas>
+							</div>
+							<div class="col p-2">
+								<button type="button" id="captchaChange" class="btn btn-primary" style="width:300px;"><i class="bi bi-arrow-repeat"></i></button>
+							</div>
+						</div>
 					</div>
 					<input type="text" name="captcha" id="form_captcha" class="form-control" required>
 					<div class="text-center">
