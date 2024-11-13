@@ -1,0 +1,25 @@
+.password-container {
+    display: flex;
+    align-items: center;   /* Alignement vertical au centre */
+    position: relative;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px;  /* Espacement pour le bouton */
+}
+
+.password-container button {
+    margin-left: 10px; /* Un petit espace entre le champ et le bouton */
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #007bff;
+}
+
+.password-container button:hover {
+    background-color: #f8f9fa;
+}
