@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('.email-auto').autocomplete({
         source: function(request, response) {
             $.ajax({
-                url: "https://s3-4137.nuage-peda.fr/share/api/search-users",
+                url: "https://s3-4056.nuage-peda.fr/Share/api/search-users",
                 dataType: "json",
                 data: {
                     q: request.term
