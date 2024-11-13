@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const captchaContext = captchaCanvas.getContext('2d');
     let lettres = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
     let captchaVal = "";
-    console.log("kk");
+
     // Générer 10 caractères aléatoires
     for (let i = 0; i < 10; i++) {
         let lettresRand = Math.floor(Math.random() * 26); // Prendre un caractère aléatoire
